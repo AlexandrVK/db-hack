@@ -1,6 +1,6 @@
-from datacenter.models import *
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import random
+from datacenter.models import Schoolkid,Mark,Commendation,Chastisement,Lesson
+
 
 def get_compliment():
     compliments = [
@@ -36,39 +36,27 @@ def get_compliment():
     ]
     return random.choice(compliments)
 
-def fix_marks(name):
+def get_schoolkid(name):
     try:
-        Mark.objects.filter(schoolkid=Schoolkid.objects.get(full_name__contains=name), points__in=[2,3]).update(points=5)   
-    except ObjectDoesNotExist:    
-        print("Имя отсутствует в списке.")
-    except  MultipleObjectsReturned:
-        print("Найдено более одного имени.")
+        return Schoolkid.objects.get(full_name__contains=name) 
+    except Schoolkid.DoesNotExist:    
+        print(f"Имя {name} отсутствует в базе данных.")
+    except  Schoolkid.MultipleObjectsReturned:
+        print("Найдено более одного имени.")   
+      
+def fix_marks(name):
+    Mark.objects.filter(schoolkid=get_schoolkid(name), points__in=[2,3]).update(points=5)
 
 def remove_chastisements(name):
-    try:
-        Chastisement.objects.filter(schoolkid=Schoolkid.objects.get(full_name__contains=name)).delete()
-    except ObjectDoesNotExist:    
-        print("Имя отсутствует в списке.")
-    except  MultipleObjectsReturned:
-        print("Найдено более одного имени.")
+    Chastisement.objects.filter(schoolkid=get_schoolkid(name)).delete()
 
 def create_commendation(name, lesson):
-    try:
-        schoolkid=Schoolkid.objects.get(full_name__contains=name)
+    schoolkid=get_schoolkid(name)
+    if schoolkid:
         random_lesson=Lesson.objects.filter(year_of_study=schoolkid.year_of_study, 
                                     group_letter=schoolkid.group_letter,
                                     subject__title = lesson).order_by('?').first() 
-        Commendation.objects.create(text=get_compliment(),created=random_lesson.date,schoolkid=schoolkid,subject=random_lesson.subject,teacher=random_lesson.teacher)
-    except ObjectDoesNotExist:    
-        print("Имя отсутствует в списке.")
-    except  MultipleObjectsReturned:
-        print("Найдено более одного имени.")
-
-    
-
-
-
-
-
-
-
+        if random_lesson:
+            Commendation.objects.create(text=get_compliment(),created=random_lesson.date,schoolkid=schoolkid,subject=random_lesson.subject,teacher=random_lesson.teacher)
+        else:
+            print(f"Предмет {lesson} отсутствует в базе данных")
