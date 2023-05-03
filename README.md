@@ -4,8 +4,9 @@
 
 ## Описание модулей
 
-Пакет состоит из модулей `fix_marks`, `remove_chastisements`, `create_commendation` и служебных процедур.
+Пакет состоит из модулей `get_schoolkid`, `fix_marks`, `remove_chastisements`, `create_commendation` и служебных процедур.
 
+- модуль `get_schoolkid` принимает параметром имя ученика и возвращает объект ученика для использования в других функциях. Обязательно выполнять первым.
 - модуль `fix_marks` принимает параметром имя ученика и заменяет все его оценки "2" и "3" на "5".
 - модуль `remove_chastisements` принимает параметром имя ученика и удаляет все его замечания.
 - модуль `create_commendation` принимает параметрами имя ученика и название предмета и добавляет случайную похвалу на указаном предмете на случайном уроке.
@@ -16,9 +17,10 @@
 
 Пример использования:
 ```
-fix_marks("Имя Фамилия")
-remove_chastisements("Имя Фамилия")
-create_commendation("Имя Фамилия","Название предмета")
+schoolkid = get_schoolkid("Имя Фамилия")
+fix_marks(schoolkid)
+remove_chastisements(schoolkid)
+create_commendation(schoolkid,"Название предмета")
 ```
 
 
@@ -37,9 +39,10 @@ create_commendation("Имя Фамилия","Название предмета")
 ```
 python manage.py shell
 import db-hack
-db-hack.fix_marks("Имя Фамилия")
-db-hack.remove_chastisements("Имя Фамилия")
-db-hack.create_commendation("Имя Фамилия","Название предмета")
+schoolkid = db-hack.get_schoolkid("Имя Фамилия")
+db-hack.fix_marks(schoolkid)
+db-hack.remove_chastisements(schoolkid)
+db-hack.create_commendation(schoolkid,"Название предмета")
 ```
 
 

@@ -44,14 +44,13 @@ def get_schoolkid(name):
     except  Schoolkid.MultipleObjectsReturned:
         print("Найдено более одного имени.")   
       
-def fix_marks(name):
-    Mark.objects.filter(schoolkid=get_schoolkid(name), points__in=[2,3]).update(points=5)
+def fix_marks(schoolkid):
+    Mark.objects.filter(schoolkid=schoolkid, points__in=[2,3]).update(points=5)
 
-def remove_chastisements(name):
-    Chastisement.objects.filter(schoolkid=get_schoolkid(name)).delete()
+def remove_chastisements(schoolkid):
+    Chastisement.objects.filter(schoolkid=schoolkid).delete()
 
-def create_commendation(name, lesson):
-    schoolkid=get_schoolkid(name)
+def create_commendation(schoolkid, lesson):
     if schoolkid:
         random_lesson=Lesson.objects.filter(year_of_study=schoolkid.year_of_study, 
                                     group_letter=schoolkid.group_letter,
